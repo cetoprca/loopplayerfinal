@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:loopplayer/providers.dart';
+import 'package:provider/provider.dart';
 
 class SideMenu extends StatelessWidget{
   final bool isMenuOpen;
@@ -21,10 +23,10 @@ class SideMenu extends StatelessWidget{
             spacing: 5,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              MenuOption(icon: Icons.folder_outlined, text: "Bucles Guardados", navigateToScreen: (){print("bucles");}),
-              MenuOption(icon: Icons.audio_file_outlined, text: "Selector de Archivos", navigateToScreen: (){print("archivos");}),
-              MenuOption(icon: Icons.music_note, text: "Reproductor de Audio", navigateToScreen: (){print("audio");}),
-              MenuOption(icon: Icons.settings, text: "Ajustes", navigateToScreen: (){print("ajustes");}),
+              MenuOption(icon: Icons.folder_outlined, text: "Bucles Guardados", navigateToScreen: (){context.read<ScreenProvider>().setScreen(3);}),
+              MenuOption(icon: Icons.audio_file_outlined, text: "Selector de Archivos", navigateToScreen: (){context.read<ScreenProvider>().setScreen(1);}),
+              MenuOption(icon: Icons.music_note, text: "Reproductor de Audio", navigateToScreen: (){context.read<ScreenProvider>().setScreen(0);}),
+              MenuOption(icon: Icons.settings, text: "Ajustes", navigateToScreen: (){context.read<ScreenProvider>().setScreen(5);}),
             ],
           ),
         ),
@@ -56,7 +58,7 @@ class MenuOption extends StatelessWidget{
               children: [
                 Icon(icon, size: 32, color: Colors.yellowAccent,),
                 SizedBox(
-                  width: 0,
+                  width: 1,
                   height: 30,
                   child: VerticalDivider(
                     width: 10,

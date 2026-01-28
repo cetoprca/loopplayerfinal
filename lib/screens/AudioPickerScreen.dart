@@ -1,8 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:loopplayer/SideMenu.dart';
+import 'package:loopplayer/SongFileData.dart';
+import 'package:loopplayer/components/LoopPlayerAppBar.dart';
+import 'package:loopplayer/components/SideMenu.dart';
+import 'package:loopplayer/main.dart';
+import 'package:loopplayer/providers.dart';
 import 'package:on_audio_query_pluse/on_audio_query.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:provider/provider.dart';
 
 class AudioPicker extends StatefulWidget{
   final bool back;
@@ -20,8 +25,6 @@ class AudioPickerState extends State<AudioPicker>{
 
   bool _isMenuOpen = false;
 
-  final GlobalKey<ScaffoldState> _scaffoldState = GlobalKey<ScaffoldState>();
-
   List<SongModel> _songs = [];
 
   @override
@@ -33,12 +36,12 @@ class AudioPickerState extends State<AudioPicker>{
 
   void _requestPermission() async {
     bool hasPermission = await onAudioQuery.permissionsStatus();
-    if(!hasPermission) {
+    while(!hasPermission) {
       hasPermission = await onAudioQuery.permissionsRequest();
 
       var permissions = await [Permission.audio, Permission.photos, Permission.videos, Permission.storage, Permission.manageExternalStorage].request();
 
-      hasPermission = permissions.values.every((status) => status.isGranted);
+      hasPermission = await onAudioQuery.permissionsStatus();
     }
 
     if (hasPermission) {
@@ -60,14 +63,13 @@ class AudioPickerState extends State<AudioPicker>{
   void _openMenu(){
     setState(() {
       _isMenuOpen ? _isMenuOpen = false : _isMenuOpen = true;
-    });;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: _scaffoldState,
-      appBar: SelectorAppBar(back: _back, goBack: _goBack, openMenu: _openMenu),
+      appBar: LoopPlayerAppBar(back: _back, goBack: _goBack, openMenu: _openMenu, text: "Selector de Archivos",),
       body: Stack(
         children: [
           Container(
@@ -81,7 +83,18 @@ class AudioPickerState extends State<AudioPicker>{
                         SongModel songModel = _songs[index];
 
                         return ListTile(
-                            title: Text(songModel.title)
+                          title: GestureDetector(
+                            child: Container(
+                                padding: EdgeInsets.all(5),
+                                child: Text(songModel.title)
+                            ),
+                          ),
+                          onTap: (){
+                            SongFileData songFileData = SongFileData();
+                            songFileData.setValuesFromSongModel(songModel);
+                            context.read<ScreenProvider>().setScreen(0);
+                            context.read<SongProvider>().changeSong(songModel);
+                          },
                         );
                       }
                   ),
@@ -96,37 +109,3 @@ class AudioPickerState extends State<AudioPicker>{
   }
 }
 
-class SelectorAppBar extends StatelessWidget implements PreferredSizeWidget{
-  final bool back;
-  final VoidCallback goBack;
-  final VoidCallback openMenu;
-
-  const SelectorAppBar({super.key, required this.back, required this.goBack, required this.openMenu});
-
-  @override
-  Widget build(BuildContext context) {
-    return AppBar(
-      automaticallyImplyLeading: false,
-      title: Row(
-        children: [
-          if(back)
-            GestureDetector(
-              child: Icon(Icons.arrow_back_rounded, size: 40,),
-              onTap: () => goBack()
-            )
-          else
-            GestureDetector(
-              child: Icon(Icons.menu, size: 40,),
-              onTap: () => openMenu()
-            ),
-          SizedBox(width: 40,),
-          Text("Selector de Archivos")
-        ],
-      ),
-      backgroundColor: Colors.black45,
-    );
-  }
-
-  @override
-  Size get preferredSize => Size.fromHeight(kToolbarHeight);
-}

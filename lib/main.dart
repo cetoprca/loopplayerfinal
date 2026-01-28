@@ -1,37 +1,52 @@
 import 'package:flutter/material.dart';
 import 'package:loopplayer/SongFileData.dart';
-import 'package:loopplayer/audioInfoView.dart';
-import 'package:loopplayer/audiopicker.dart';
+import 'package:loopplayer/components/AudioInfoView.dart';
+import 'package:loopplayer/screens/AudioPickerScreen.dart';
+import 'package:loopplayer/providers.dart';
+import 'package:loopplayer/screens/LoopPickerScreen.dart';
+import 'package:loopplayer/screens/LoopPlayerScreen.dart';
+import 'package:loopplayer/screens/SettingsScreen.dart';
 import 'package:provider/provider.dart';
 import 'package:on_audio_query_pluse/on_audio_query.dart';
 
 void main(){
   runApp(
-    ChangeNotifierProvider(
-        create: (context) => SongProvider(),
-      child: MaterialApp(home: AudioPicker(back: false),),
-    )
+      MultiProvider(
+          providers: [
+            ChangeNotifierProvider(create: (context) => SongProvider()),
+            ChangeNotifierProvider(create: (context) => ScreenProvider()),
+            ChangeNotifierProvider(create: (context) => AudioPlayerProvider()),
+          ],
+          child: MaterialApp(home: MainView(),)
+      )
   );
 }
 
-class LoopPlayer extends StatelessWidget{
-  const LoopPlayer({super.key});
+class MainView extends StatelessWidget{
+  const MainView({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final index = context.watch<ScreenProvider>().currentIndex;
 
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(title: Row(children: [Icon(Icons.menu), Text("LoopPlayer", style: TextStyle(color: Colors.yellowAccent),), Icon(Icons.folder), Icon(Icons.save), Icon(Icons.file_open)],),),
-        body: Center(
-          child: Column(
-            children: [
-              AudioInfoView(songFileData: SongFileData())
-            ],
-          ),
-        ),
-      ),
-    );
+    context.read<AudioPlayerProvider>().initPlayer();
+
+    switch (index) {
+      case 0:
+        return const LoopPlayer();
+      case 1:
+        return const AudioPicker(back: false);
+      case 2:
+        return const AudioPicker(back: true);
+      case 3:
+        return const LoopPicker(back: false);
+      case 4:
+        return const LoopPicker(back: true);
+      case 5:
+        return const SettingsScreen();
+      default:
+        return const LoopPlayer();
+    }
   }
 }
 

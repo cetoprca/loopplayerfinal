@@ -29,6 +29,7 @@ class AudioInfoView extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
+    print(songFileData);
     _buildTexts();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,

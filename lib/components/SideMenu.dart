@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:loopplayer/providers.dart';
+import 'package:loopplayer/screens/AudioPickerScreen.dart';
+import 'package:loopplayer/screens/LoopPickerScreen.dart';
+import 'package:loopplayer/screens/LoopPlayerScreen.dart';
+import 'package:loopplayer/screens/SettingsScreen.dart';
 import 'package:provider/provider.dart';
 
 class SideMenu extends StatelessWidget{
@@ -23,10 +27,10 @@ class SideMenu extends StatelessWidget{
             spacing: 5,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              MenuOption(icon: Icons.folder_outlined, text: "Bucles Guardados", navigateToScreen: (){context.read<ScreenProvider>().setScreen(3);}),
-              MenuOption(icon: Icons.audio_file_outlined, text: "Selector de Archivos", navigateToScreen: (){context.read<ScreenProvider>().setScreen(1);}),
-              MenuOption(icon: Icons.music_note, text: "Reproductor de Audio", navigateToScreen: (){context.read<ScreenProvider>().setScreen(0);}),
-              MenuOption(icon: Icons.settings, text: "Ajustes", navigateToScreen: (){context.read<ScreenProvider>().setScreen(5);}),
+              MenuOption(icon: Icons.folder_outlined, text: "Bucles Guardados", navigateToScreen: LoopPicker(back: false)),
+              MenuOption(icon: Icons.audio_file_outlined, text: "Selector de Archivos", navigateToScreen: AudioPicker(back: false)),
+              MenuOption(icon: Icons.music_note, text: "Reproductor de Audio", navigateToScreen: LoopPlayer()),
+              MenuOption(icon: Icons.settings, text: "Ajustes", navigateToScreen: SettingsScreen()),
             ],
           ),
         ),
@@ -36,7 +40,7 @@ class SideMenu extends StatelessWidget{
 }
 
 class MenuOption extends StatelessWidget{
-  final VoidCallback navigateToScreen;
+  final Widget navigateToScreen;
   final IconData icon;
   final String text;
   const MenuOption({super.key, required this.icon, required this.text, required this.navigateToScreen});
@@ -70,7 +74,7 @@ class MenuOption extends StatelessWidget{
               ],
             ),
           ),
-          onTap: () => navigateToScreen(),
+          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => navigateToScreen)),
         )
     );
   }

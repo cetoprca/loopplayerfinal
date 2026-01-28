@@ -26,7 +26,7 @@ class LoopPickerState extends State<LoopPicker>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: LoopPlayerAppBar(back: widget.back, goBack: (){}, openMenu: _openMenu, text: "Selector de Bucle"),
+      appBar: LoopPlayerAppBar(back: widget.back, openMenu: _openMenu, text: "Selector de Bucle"),
       body: Stack(
         children: [
           SideMenu(isMenuOpen: _isMenuOpen)

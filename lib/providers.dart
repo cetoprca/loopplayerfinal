@@ -10,21 +10,9 @@ class SongProvider extends ChangeNotifier{
 
   SongFileData get songFileData => _songFileData;
 
-  void changeSong(SongModel songModel){
-    SongFileData songFileData = SongFileData();
-    songFileData.setValuesFromSongModel(songModel);
+  void changeSong(SongFileData songFileData){
     _songFileData = songFileData;
-    notifyListeners();
-  }
-}
-
-class ScreenProvider extends ChangeNotifier {
-  int _currentIndex = 0;
-
-  int get currentIndex => _currentIndex;
-
-  void setScreen(int index) {
-    _currentIndex = index;
+    print("songfiledata cambiado a ${_songFileData}");
     notifyListeners();
   }
 }
@@ -43,6 +31,11 @@ class AudioPlayerProvider extends ChangeNotifier{
   Duration end = Duration.zero;
 
   SongFileData songFileData = SongFileData();
+
+  bool get playing => isPlaying;
+  bool get paused => isPaused;
+  Duration get audioPosition => position;
+
 
   Future<void> init() async{
     if(!isInitialized){
@@ -133,9 +126,11 @@ class AudioPlayerProvider extends ChangeNotifier{
     }
 
     player.seekToPlayer(Duration(seconds: second));
+    notifyListeners();
   }
 
   Future<void> toggleLoop() async{
     isLooping ? isLooping = false : isLooping = true;
+    notifyListeners();
   }
 }

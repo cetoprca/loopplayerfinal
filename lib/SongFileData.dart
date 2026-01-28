@@ -13,8 +13,10 @@ class SongFileData{
   Duration? end = null;
 
   Future<void> setValuesFromSongModel(SongModel songModel) async {
+    print("actualizando segun songmodel");
     Tag? tag = await AudioTags.read(songModel.data);
     if(tag != null){
+      print("hay tag");
       trackName = tag.title ?? "";
       albumArtistName = tag.albumArtist ?? "";
       albumName = tag.album ?? "";
@@ -27,4 +29,9 @@ class SongFileData{
   SongFileData();
 
   SongFileData.populate(this.trackName, this.albumArtistName, this.albumName, this.fileName, this.albumArt, this.filePath);
+
+  @override
+  String toString() {
+    return "$trackName, $albumArtistName, $albumName, $fileName, $filePath";
+  }
 }

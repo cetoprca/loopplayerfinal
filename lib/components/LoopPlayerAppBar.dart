@@ -1,37 +1,57 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 
-class LoopPlayerAppBar extends StatelessWidget implements PreferredSizeWidget{
+class LoopPlayerAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool back;
-  final VoidCallback goBack;
   final VoidCallback openMenu;
   final String text;
+  final List<IconButton>? buttons;
 
-  const LoopPlayerAppBar({super.key, required this.back, required this.goBack, required this.openMenu, required this.text});
+  const LoopPlayerAppBar({
+    super.key,
+    required this.back,
+    required this.openMenu,
+    required this.text,
+    this.buttons,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final List<Widget> bar = [];
+
+    bar.add(
+      IconButton(
+        onPressed: back
+            ? () => Navigator.pop(context)
+            : openMenu,
+        icon: Icon(back ? Icons.arrow_back : Icons.menu, size: 40),
+      ),
+    );
+
+    bar.add(
+      Text(text, style: const TextStyle(fontSize: 32)),
+    );
+
+    if (buttons != null) {
+      bar.add(
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: buttons!,
+        ),
+      );
+    }
+
     return AppBar(
       automaticallyImplyLeading: false,
-      title: Row(
-        children: [
-          if(back)
-            GestureDetector(
-                child: Icon(Icons.arrow_back_rounded, size: 40,),
-                onTap: () => goBack()
-            )
-          else
-            GestureDetector(
-                child: Icon(Icons.menu, size: 40,),
-                onTap: () => openMenu()
-            ),
-          SizedBox(width: 40,),
-          Text(text)
-        ],
-      ),
       backgroundColor: Colors.black45,
+      title: Row(
+        spacing: 11,
+        children: bar,
+      ),
     );
   }
 
   @override
-  Size get preferredSize => Size.fromHeight(kToolbarHeight);
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }

@@ -14,7 +14,6 @@ void main(){
       MultiProvider(
           providers: [
             ChangeNotifierProvider(create: (context) => SongProvider()),
-            ChangeNotifierProvider(create: (context) => ScreenProvider()),
             ChangeNotifierProvider(create: (context) => AudioPlayerProvider()),
           ],
           child: MaterialApp(home: MainView(),)
@@ -27,26 +26,9 @@ class MainView extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-    final index = context.watch<ScreenProvider>().currentIndex;
-
     context.read<AudioPlayerProvider>().init();
 
-    switch (index) {
-      case 0:
-        return const LoopPlayer();
-      case 1:
-        return const AudioPicker(back: false);
-      case 2:
-        return const AudioPicker(back: true);
-      case 3:
-        return const LoopPicker(back: false);
-      case 4:
-        return const LoopPicker(back: true);
-      case 5:
-        return const SettingsScreen();
-      default:
-        return const LoopPlayer();
-    }
+    return LoopPlayer();
   }
 }
 

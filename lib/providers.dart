@@ -1,10 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:flutter_sound/flutter_sound.dart';
-import 'package:loopplayer/screens/AudioPickerScreen.dart';
-import 'package:loopplayer/screens/LoopPickerScreen.dart';
-import 'package:loopplayer/main.dart';
-import 'package:loopplayer/screens/LoopPlayerScreen.dart';
-import 'package:loopplayer/screens/SettingsScreen.dart';
+import 'package:flutter_sound/public/flutter_sound_player.dart';
 import 'package:on_audio_query_pluse/on_audio_query.dart';
 import 'SongFileData.dart';
 
@@ -33,132 +30,112 @@ class ScreenProvider extends ChangeNotifier {
 }
 
 class AudioPlayerProvider extends ChangeNotifier{
-  final FlutterSoundPlayer _player = FlutterSoundPlayer();
-  SongFileData _songFileData = SongFileData();
+  final FlutterSoundPlayer player = FlutterSoundPlayer();
+  bool isInitialized = false;
 
-  Duration _position = Duration.zero;
-  Duration _duration = Duration.zero;
+  bool isPlaying = false;
+  bool isPaused = false;
+  bool isLooping = false;
 
-  Duration _startPosition = Duration.zero;
-  Duration _endPosition = Duration.zero;
+  Duration position = Duration.zero;
+  Duration duration = Duration.zero;
+  Duration start = Duration.zero;
+  Duration end = Duration.zero;
 
-  bool _isPaused = false;
-  bool _isPlaying = false;
-  bool _isLooping = false;
+  SongFileData songFileData = SongFileData();
 
-  bool _init = false;
+  Future<void> init() async{
+    if(!isInitialized){
+      await player.openPlayer();
 
-  FlutterSoundPlayer get player => _player;
-  bool get isPaused => _isPaused;
-  bool get isPlaying => _isPlaying;
-  bool get isLooping => _isLooping;
+      player.onProgress!.listen((event){
+        position = event.position;
+        duration = event.duration;
 
-  void setSong(SongFileData songFileData){
-    if(_init){
-      _songFileData = songFileData;
-      notifyListeners();
-    }
-  }
-
-  void setStart(int second){
-    _startPosition = Duration(seconds: second);
-    notifyListeners();
-  }
-
-  void setEnd(int second){
-    _endPosition = Duration(seconds: second);
-    notifyListeners();
-  }
-
-  Future<void> initPlayer() async{
-    if(!_init){
-      print("Inicializando player...");
-
-      await _player.openPlayer();
-      _player.setSubscriptionDuration(Duration(milliseconds: 100));
-
-      _player.onProgress!.listen((event) {
-        _position = event.position;
-        _duration = event.duration;
-
-        // if(_position >= _endPosition){
-        //   if(_isLooping) {
-        //     _player.seekToPlayer(_startPosition);
-        //   }else{
-        //     _player.stopPlayer();
-        //     _isPlaying = false;
-        //   }
-        // }
-      });
-
-      _init = true;
-      print("Player inicializado");
-    }
-  }
-
-  Future<void> startPlayer() async{
-    if(!_init){
-      return;
-    }
-    print("Empezando reproduccion de ${_songFileData.filePath}");
-
-    if(isPlaying){
-      _player.stopPlayer();
-    }
-
-    if(_songFileData.filePath.isEmpty){
-      return;
-    }
-
-    await _player.startPlayer(
-        fromURI: _songFileData.filePath,
-        whenFinished:(){
-          if(_isLooping){
-            _player.seekToPlayer(_startPosition);
+        if(event.position > end){
+          if(isLooping){
+            player.seekToPlayer(start);
           }else{
-            _isPlaying = false;
+            isPlaying = false;
+            isPaused = false;
           }
         }
-    );
 
-    _endPosition = _duration;
-    await _player.seekToPlayer(_startPosition);
+        notifyListeners();
+      });
+    }
 
-    _isPlaying = true;
-    notifyListeners();
-    print("Reproduccion empezada");
+    isInitialized = true;
   }
 
-  Future<void> playLogic() async{
-    print("Click en pause/play");
-
-    if(!_isPlaying){
-      startPlayer();
+  Future<void> play() async{
+    if(!isInitialized){
+      await init();
     }
-    if(_isPlaying){
-      if(!_isPaused){
-        await _player.pausePlayer();
-        _isPaused = true;
-      }else{
-        await _player.resumePlayer();
-        _isPaused = false;
+
+    await player.startPlayer(
+      fromURI: songFileData.filePath,
+      whenFinished: (){
+        isPlaying = false;
+        isPaused = false;
+        notifyListeners();
+      }
+    );
+
+    isPlaying = true;
+    notifyListeners();
+  }
+
+  Future<void> stop() async{
+    if(!isInitialized){
+      await init();
+    }
+
+    if(isPlaying){
+      await player.stopPlayer();
+      isPlaying = false;
+    }
+    notifyListeners();
+  }
+
+  Future<void> pause() async{
+    if(!isInitialized){
+      await init();
+    }
+
+    if(isPlaying){
+      if(!isPaused){
+        await player.pausePlayer();
+        isPaused = true;
       }
     }
     notifyListeners();
   }
 
-  Future<void> restart() async{
-    await _player.seekToPlayer(_startPosition);
+  Future<void> resume() async{
+    if(!isInitialized){
+      await init();
+    }
+
+    if(isPlaying){
+      if(isPaused){
+        await player.resumePlayer();
+        isPaused = false;
+      }
+    }
+
     notifyListeners();
   }
 
-  void toggleLoop(){
-    _isLooping ? _isLooping = false : _isLooping = true;
-    notifyListeners();
+  Future<void> seek(int second) async{
+    if(!isInitialized){
+      await init();
+    }
+
+    player.seekToPlayer(Duration(seconds: second));
   }
 
-  Future<void> searchPosition(int precision) async{
-    await _player.seekToPlayer(_position + Duration(milliseconds: precision));
-    notifyListeners();
+  Future<void> toggleLoop() async{
+    isLooping ? isLooping = false : isLooping = true;
   }
 }

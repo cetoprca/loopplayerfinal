@@ -29,7 +29,7 @@ class MainView extends StatelessWidget{
   Widget build(BuildContext context) {
     final index = context.watch<ScreenProvider>().currentIndex;
 
-    context.read<AudioPlayerProvider>().initPlayer();
+    context.read<AudioPlayerProvider>().init();
 
     switch (index) {
       case 0:

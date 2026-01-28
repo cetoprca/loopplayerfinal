@@ -9,6 +9,8 @@ class SongFileData{
   String fileName = "";
   Image albumArt = Image(image: AssetImage("assets/music_note.png"), width: 256, height: 256,);
   String filePath = "";
+  Duration? start = null;
+  Duration? end = null;
 
   Future<void> setValuesFromSongModel(SongModel songModel) async {
     Tag? tag = await AudioTags.read(songModel.data);

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_sound/public/flutter_sound_player.dart';
 import 'package:on_audio_query_pluse/on_audio_query.dart';
 import 'SongFileData.dart';
@@ -12,7 +13,6 @@ class SongProvider extends ChangeNotifier{
 
   void changeSong(SongFileData songFileData){
     _songFileData = songFileData;
-    print("songfiledata cambiado a ${_songFileData}");
     notifyListeners();
   }
 }
@@ -25,30 +25,48 @@ class AudioPlayerProvider extends ChangeNotifier{
   bool isPaused = false;
   bool isLooping = false;
 
+  bool _newSong = true;
+
   Duration position = Duration.zero;
   Duration duration = Duration.zero;
   Duration start = Duration.zero;
   Duration end = Duration.zero;
 
-  SongFileData songFileData = SongFileData();
+  SongFileData _songFileData = SongFileData();
+
+  bool _error = false;
 
   bool get playing => isPlaying;
   bool get paused => isPaused;
+  bool get error => _error;
   Duration get audioPosition => position;
 
+  Future<void> changeSong(SongFileData songFileData) async{
+    if(songFileData != _songFileData) {
+      _songFileData = songFileData;
+      _newSong = true;
+      await play();
+    }
+  }
 
   Future<void> init() async{
     if(!isInitialized){
       await player.openPlayer();
+      player.setSubscriptionDuration(Duration(milliseconds: 100));
 
       player.onProgress!.listen((event){
         position = event.position;
         duration = event.duration;
 
+        if(event.position < start){
+          restart();
+        }
+
         if(event.position > end){
           if(isLooping){
             player.seekToPlayer(start);
           }else{
+            stop();
             isPlaying = false;
             isPaused = false;
           }
@@ -62,21 +80,39 @@ class AudioPlayerProvider extends ChangeNotifier{
   }
 
   Future<void> play() async{
-    if(!isInitialized){
-      await init();
-    }
-
-    await player.startPlayer(
-      fromURI: songFileData.filePath,
-      whenFinished: (){
-        isPlaying = false;
-        isPaused = false;
-        notifyListeners();
+    if(_songFileData.filePath.isNotEmpty){
+      if(!isInitialized){
+        await init();
       }
-    );
 
-    isPlaying = true;
-    notifyListeners();
+      if(isPlaying){
+        await player.stopPlayer();
+      }
+
+      _error = false;
+
+      try{
+        await player.startPlayer(
+            fromURI: _songFileData.filePath,
+            whenFinished: (){
+              isPlaying = false;
+              isPaused = false;
+              notifyListeners();
+            }
+        );
+      }on PlatformException{
+        _error = true;
+        notifyListeners();
+        return;
+      }
+
+      start = start == Duration.zero ? _songFileData.start ?? Duration.zero : start;
+      end = end == duration ? _songFileData.end ?? duration : end;
+
+      isPlaying = true;
+      isPaused = false;
+      notifyListeners();
+    }
   }
 
   Future<void> stop() async{
@@ -88,6 +124,15 @@ class AudioPlayerProvider extends ChangeNotifier{
       await player.stopPlayer();
       isPlaying = false;
     }
+    notifyListeners();
+  }
+
+  Future<void> restart() async{
+    if(!isInitialized){
+      await init();
+    }
+
+    await seek(start.inSeconds);
     notifyListeners();
   }
 
@@ -120,17 +165,36 @@ class AudioPlayerProvider extends ChangeNotifier{
     notifyListeners();
   }
 
-  Future<void> seek(int second) async{
+  Future<void> searchPosition(int milliseconds) async{
     if(!isInitialized){
       await init();
     }
 
-    player.seekToPlayer(Duration(seconds: second));
+    player.seekToPlayer(Duration(milliseconds: position.inMilliseconds + milliseconds));
+    notifyListeners();
+  }
+
+  Future<void> seek(int seconds) async{
+    if(!isInitialized){
+      await init();
+    }
+
+    player.seekToPlayer(Duration(seconds: seconds));
     notifyListeners();
   }
 
   Future<void> toggleLoop() async{
     isLooping ? isLooping = false : isLooping = true;
+    notifyListeners();
+  }
+
+  Future<void> changeStart(int second) async{
+    start = Duration(seconds: second);
+    notifyListeners();
+  }
+
+  Future<void> changeEnd(int second) async{
+    end = Duration(seconds: second);
     notifyListeners();
   }
 }

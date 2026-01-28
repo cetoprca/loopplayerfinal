@@ -10,16 +10,31 @@ class AudioInfoView extends StatelessWidget{
 
   AudioInfoView({super.key, required this.songFileData});
 
+  Container getContainer(String text) => Container(
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: Colors.grey),
+      padding: EdgeInsets.all(5),
+      constraints: BoxConstraints(
+          maxWidth: 350
+      ),
+      child: Text(
+          text,
+          softWrap: true,
+          textAlign: TextAlign.center
+      )
+  );
+
   void _buildTexts() {
     // Si no hay trackName, mostramos solo el archivo
     _info = [];
     if (songFileData.trackName.isEmpty) {
-      _texts = [Container(width: 350, child: Text("Archivo: ${songFileData.fileName}", softWrap: true))];
+      _texts = [getContainer(songFileData.fileName.isNotEmpty ? songFileData.fileName : "Seleccione un archivo")];
     } else {
       _texts = [
-        Text("Cancion: ${songFileData.trackName}", softWrap: true,),
-        Text("Album: ${songFileData.albumName.isEmpty ? "No reconocido" : songFileData.albumName}", softWrap: true),
-        Text("Artista: ${songFileData.albumArtistName.isEmpty ? "No reconocido" : songFileData.albumArtistName}", softWrap: true),
+        getContainer(songFileData.trackName),
+        getContainer(songFileData.albumName.isEmpty ? "No reconocido" : songFileData.albumName),
+        getContainer(songFileData.albumArtistName.isEmpty ? "No reconocido" : songFileData.albumArtistName)
       ];
     }
 
@@ -29,9 +44,9 @@ class AudioInfoView extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-    print(songFileData);
     _buildTexts();
     return Column(
+      spacing: 5,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: _info,
     );

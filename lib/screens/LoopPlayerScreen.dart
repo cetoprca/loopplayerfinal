@@ -1,11 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:loopplayer/SongFileData.dart';
 import 'package:loopplayer/components/AudioInfoView.dart';
 import 'package:loopplayer/components/LoopPlayerAppBar.dart';
 import 'package:loopplayer/components/PlayerControls.dart';
+import 'package:loopplayer/components/PositionSlider.dart';
 import 'package:loopplayer/components/SideMenu.dart';
 import 'package:flutter_sound/flutter_sound.dart';
+import 'package:loopplayer/components/StartEndSlider.dart';
 import 'package:loopplayer/providers.dart';
 import 'package:loopplayer/screens/AudioPickerScreen.dart';
 import 'package:loopplayer/screens/LoopPickerScreen.dart';
@@ -53,29 +56,50 @@ class LoopPlayerState extends State<LoopPlayer>{
   }
 
   Future<void> _restart() async{
-    await context.read<AudioPlayerProvider>().seek(0);
+    await context.read<AudioPlayerProvider>().restart();
   }
 
-  Future<void> _searchPosition(int second) async{
-    Duration _position = context.read<AudioPlayerProvider>().position;
-    await context.read<AudioPlayerProvider>().seek(_position.inSeconds + second);
+  Future<void> _searchPosition(int milliseconds) async{
+    await context.read<AudioPlayerProvider>().searchPosition(milliseconds);
   }
 
   Future<void> _seek(int second) async{
     await context.read<AudioPlayerProvider>().seek(second);
   }
 
+  Future<void> _changeStart(int second) async{
+    await context.read<AudioPlayerProvider>().changeStart(second);
+  }
+
+  Future<void> _changeEnd(int second) async{
+    await context.read<AudioPlayerProvider>().changeEnd(second);
+  }
+
+
   @override
   Widget build(BuildContext context) {
     final songFileData = context.watch<SongProvider>().songFileData;
 
-    context.read<AudioPlayerProvider>().songFileData = songFileData;
+    context.read<AudioPlayerProvider>().changeSong(songFileData);
 
-    bool _isPlaying = context.watch<AudioPlayerProvider>().isPlaying;
-    bool _isPaused = context.watch<AudioPlayerProvider>().isPaused;
-    bool _isLooping = context.watch<AudioPlayerProvider>().isLooping;
-    Duration _position = context.watch<AudioPlayerProvider>().position;
-    Duration _duration = context.watch<AudioPlayerProvider>().duration;
+    bool isPlaying = context.watch<AudioPlayerProvider>().isPlaying;
+    bool isPaused = context.watch<AudioPlayerProvider>().isPaused;
+    bool isLooping = context.watch<AudioPlayerProvider>().isLooping;
+    Duration position = context.watch<AudioPlayerProvider>().position;
+    Duration duration = context.watch<AudioPlayerProvider>().duration;
+
+    Duration start = context.watch<AudioPlayerProvider>().start;
+    Duration end = context.watch<AudioPlayerProvider>().end;
+
+    bool error = context.watch<AudioPlayerProvider>().error;
+
+    if(error){
+      Fluttertoast.showToast(
+        msg: "Ha ocurrido un error abriendo el archivo",
+        gravity: ToastGravity.CENTER,
+        toastLength: Toast.LENGTH_LONG
+      );
+    }
 
     return Scaffold(
       appBar: LoopPlayerAppBar(
@@ -106,29 +130,26 @@ class LoopPlayerState extends State<LoopPlayer>{
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Expanded(
-                child: AudioInfoView(songFileData: songFileData),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(height: 20,),
+                    AudioInfoView(songFileData: songFileData),
+                    SizedBox(height: 20,),
+                    PositionSlider(position: position, duration: duration, moveValue: _seek),
+                    StartEndSlider(position: start, duration: duration, moveValue: _changeStart, start: true),
+                    StartEndSlider(position: end, duration: duration, moveValue: _changeEnd, start: false),
+                  ],
+                )
               ),
-              Expanded(
-                  child: Center(
-                    child: Slider(
-                      min: 0,
-                      max: _duration.inSeconds.toDouble(),
-                      value: _position.inSeconds.toDouble().clamp(0.0, _duration.inSeconds.toDouble()),
-                      onChanged: (value){
-                        _seek(value.toInt());
-                      }
-                    ),
-                  )
-              ),
-              Text("${_position.inSeconds}"),
               PlayerControls(
                   playLogic: _playLogic,
                   toggleLoop: _toggleLoop,
                   restart: _restart,
                   searchPosition: _searchPosition,
-                  isPlaying: _isPlaying,
-                  isLooping: _isLooping,
-                  isPaused: _isPaused
+                  isPlaying: isPlaying,
+                  isLooping: isLooping,
+                  isPaused: isPaused
               )
             ],
           ),

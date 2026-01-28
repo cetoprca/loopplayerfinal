@@ -46,7 +46,7 @@ class LoopPlayerAppBar extends StatelessWidget implements PreferredSizeWidget {
       automaticallyImplyLeading: false,
       backgroundColor: Colors.black45,
       title: Row(
-        spacing: 11,
+        spacing: 0,
         children: bar,
       ),
     );

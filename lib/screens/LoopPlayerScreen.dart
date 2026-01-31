@@ -1,15 +1,13 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:loopplayer/SongFileData.dart';
 import 'package:loopplayer/components/AudioInfoView.dart';
 import 'package:loopplayer/components/LoopPlayerAppBar.dart';
 import 'package:loopplayer/components/PlayerControls.dart';
 import 'package:loopplayer/components/PositionSlider.dart';
 import 'package:loopplayer/components/SideMenu.dart';
-import 'package:flutter_sound/flutter_sound.dart';
 import 'package:loopplayer/components/StartEndSlider.dart';
-import 'package:loopplayer/providers.dart';
+import 'package:loopplayer/providers/AudioPlayerProvider.dart';
+import 'package:loopplayer/providers/SongProvider.dart';
 import 'package:loopplayer/screens/AudioPickerScreen.dart';
 import 'package:loopplayer/screens/LoopPickerScreen.dart';
 import 'package:provider/provider.dart';
@@ -75,6 +73,21 @@ class LoopPlayerState extends State<LoopPlayer>{
     await context.read<AudioPlayerProvider>().changeEnd(second);
   }
 
+  Future<void> _moveStartForward(Duration start) async{
+    await context.read<AudioPlayerProvider>().changeStart(start.inSeconds + 1);
+  }
+
+  Future<void> _moveStartBackward(Duration start) async{
+    await context.read<AudioPlayerProvider>().changeStart(start.inSeconds - 1);
+  }
+
+  Future<void> _moveEndForward(Duration end) async {
+    await context.read<AudioPlayerProvider>().changeEnd(end.inSeconds + 1);
+  }
+
+  Future<void> _moveEndBackward(Duration end) async{
+    await context.read<AudioPlayerProvider>().changeEnd(end.inSeconds - 1);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -137,8 +150,8 @@ class LoopPlayerState extends State<LoopPlayer>{
                     AudioInfoView(songFileData: songFileData),
                     SizedBox(height: 20,),
                     PositionSlider(position: position, duration: duration, moveValue: _seek),
-                    StartEndSlider(position: start, duration: duration, moveValue: _changeStart, start: true),
-                    StartEndSlider(position: end, duration: duration, moveValue: _changeEnd, start: false),
+                    StartEndSlider(position: start, duration: duration, moveValue: _changeStart, start: true, moveForward: (){_moveStartForward(start);}, moveBackward: (){_moveStartBackward(start);},),
+                    StartEndSlider(position: end, duration: duration, moveValue: _changeEnd, start: false, moveForward: (){_moveEndForward(end);}, moveBackward: (){_moveEndBackward(end);}),
                   ],
                 )
               ),

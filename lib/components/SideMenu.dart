@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:loopplayer/providers.dart';
 import 'package:loopplayer/screens/AudioPickerScreen.dart';
 import 'package:loopplayer/screens/LoopPickerScreen.dart';
 import 'package:loopplayer/screens/LoopPlayerScreen.dart';
 import 'package:loopplayer/screens/SettingsScreen.dart';
-import 'package:provider/provider.dart';
 
 class SideMenu extends StatelessWidget{
   final bool isMenuOpen;

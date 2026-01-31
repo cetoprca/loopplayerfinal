@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class LoopSlider extends StatelessWidget{
@@ -11,16 +10,14 @@ class LoopSlider extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Column(
-        children: [
-          Slider(
-            min: 0,
-            max: duration.inSeconds.toDouble().clamp(0.0, duration.inSeconds.toDouble()),
-            value: position.inSeconds.toDouble(),
-            onChanged: (value) => moveValue(value.toInt())),
-        ],
-      ),
+    return Column(
+      children: [
+        Slider(
+          min: 0,
+          max: duration.inSeconds.toDouble().clamp(0.0, duration.inSeconds.toDouble()),
+          value: position.inSeconds.toDouble(),
+          onChanged: (value) => moveValue(value.toInt())),
+      ],
     );
   }
 }

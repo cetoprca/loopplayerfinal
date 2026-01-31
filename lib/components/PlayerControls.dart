@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:loopplayer/SongFileData.dart';
 
 class PlayerControls extends StatelessWidget{
   final VoidCallback playLogic;

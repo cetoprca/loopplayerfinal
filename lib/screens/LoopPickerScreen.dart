@@ -1,8 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:loopplayer/components/LoopPlayerAppBar.dart';
 import 'package:loopplayer/components/SideMenu.dart';
-import 'package:loopplayer/main.dart';
 
 class LoopPicker extends StatefulWidget{
   const LoopPicker({super.key, required this.back});

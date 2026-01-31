@@ -1,9 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:loopplayer/SongFileData.dart';
+import 'package:loopplayer/model/SongFileData.dart';
 import 'package:loopplayer/components/LoopPlayerAppBar.dart';
 import 'package:loopplayer/components/SideMenu.dart';
-import 'package:loopplayer/providers.dart';
+import 'package:loopplayer/providers/SongProvider.dart';
 import 'package:loopplayer/screens/LoopPlayerScreen.dart';
 import 'package:on_audio_query_pluse/on_audio_query.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -65,7 +64,7 @@ class AudioPickerState extends State<AudioPicker>{
   Future<void> sendToProvider(SongModel songModel) async{
     SongFileData songFileData = SongFileData();
     await songFileData.setValuesFromSongModel(songModel);
-    context.read<SongProvider>().changeSong(songFileData);
+    if(mounted) context.read<SongProvider>().changeSong(songFileData);
   }
 
   @override

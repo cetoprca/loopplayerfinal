@@ -1,14 +1,10 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
-import 'package:loopplayer/SongFileData.dart';
+import 'package:loopplayer/model/SongFileData.dart';
 
 class AudioInfoView extends StatelessWidget{
   final SongFileData songFileData;
-  List<Widget> _info = [];
-  List<Widget> _texts = [];
 
-  AudioInfoView({super.key, required this.songFileData});
+  const AudioInfoView({super.key, required this.songFileData});
 
   Container getContainer(String text) => Container(
       decoration: BoxDecoration(
@@ -25,30 +21,34 @@ class AudioInfoView extends StatelessWidget{
       )
   );
 
-  void _buildTexts() {
+  List<Widget> _buildTexts() {
     // Si no hay trackName, mostramos solo el archivo
-    _info = [];
+    List<Widget> info = [];
+    List<Widget> texts = [];
+
     if (songFileData.trackName.isEmpty) {
-      _texts = [getContainer(songFileData.fileName.isNotEmpty ? songFileData.fileName : "Seleccione un archivo")];
+      texts = [getContainer(songFileData.fileName.isNotEmpty ? songFileData.fileName : "Seleccione un archivo")];
     } else {
-      _texts = [
+      texts = [
         getContainer(songFileData.trackName),
         getContainer(songFileData.albumName.isEmpty ? "No reconocido" : songFileData.albumName),
         getContainer(songFileData.albumArtistName.isEmpty ? "No reconocido" : songFileData.albumArtistName)
       ];
     }
 
-    _info.add(songFileData.albumArt);
-    _info.addAll(_texts);
+    info.add(songFileData.albumArt);
+    info.addAll(texts);
+
+    return info;
   }
 
   @override
   Widget build(BuildContext context) {
-    _buildTexts();
+    var info = _buildTexts();
     return Column(
       spacing: 5,
       crossAxisAlignment: CrossAxisAlignment.center,
-      children: _info,
+      children: info,
     );
   }
 

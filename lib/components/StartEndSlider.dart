@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:loopplayer/components/LoopSlider.dart';
 
@@ -6,10 +5,12 @@ class StartEndSlider extends StatelessWidget{
   final bool start;
   final Duration position;
   final Duration duration;
+  final VoidCallback moveForward;
+  final VoidCallback moveBackward;
 
   final ValueChanged<int> moveValue;
 
-  const StartEndSlider({super.key, required this.position, required this.duration, required this.moveValue, required this.start});
+  const StartEndSlider({super.key, required this.position, required this.duration, required this.moveValue, required this.start, required this.moveForward, required this.moveBackward});
 
   String formatDuration(Duration duration) {
     final hours = duration.inHours;
@@ -24,40 +25,43 @@ class StartEndSlider extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Column(
-        children: [
-          Center(
-            child: Row(
-              spacing: 5,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  decoration: BoxDecoration(
+    return Column(
+      children: [
+        Center(
+          child: Row(
+            spacing: 5,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              GestureDetector(
+                  child: Container(
+                    decoration: BoxDecoration(
+                        color: Colors.yellow,
+                        borderRadius: BorderRadius.circular(10)
+                    ),
+                    width: 30,
+                    height: 30,
+                    child: Icon(Icons.arrow_back_rounded),
+                  ),
+                  onTap: () => moveBackward()
+              ),
+              Container(
+                decoration: BoxDecoration(
                     color: Colors.yellow,
                     borderRadius: BorderRadius.circular(10)
-                  ),
-                  width: 30,
-                  height: 30,
-                  child: Icon(Icons.arrow_back_rounded),
                 ),
-                Container(
-                  decoration: BoxDecoration(
-                      color: Colors.yellow,
-                      borderRadius: BorderRadius.circular(10)
-                  ),
-                  width: 50,
-                  height: 50,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(start ? "A" : "B", textAlign: TextAlign.center,),
-                      Text(formatDuration(position), textAlign: TextAlign.center,)
-                    ],
-                  )
-                ),
-                Container(
+                width: 50,
+                height: 50,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(start ? "A" : "B", textAlign: TextAlign.center,),
+                    Text(formatDuration(position), textAlign: TextAlign.center,)
+                  ],
+                )
+              ),
+              GestureDetector(
+                child: Container(
                   decoration: BoxDecoration(
                       color: Colors.yellow,
                       borderRadius: BorderRadius.circular(10)
@@ -66,12 +70,13 @@ class StartEndSlider extends StatelessWidget{
                   height: 30,
                   child: Icon(Icons.arrow_forward_rounded),
                 ),
-              ],
-            ),
+                onTap: () => moveForward()
+              )
+            ],
           ),
-          LoopSlider(position: position, duration: duration, moveValue: moveValue)
-        ],
-      ),
+        ),
+        LoopSlider(position: position, duration: duration, moveValue: moveValue)
+      ],
     );
   }
 }

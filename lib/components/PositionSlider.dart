@@ -22,21 +22,19 @@ class PositionSlider extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            spacing: 300,
-            children: [
-              Text(formatDuration(position)),
-              Text(formatDuration(duration)),
-            ],
-          ),
-          LoopSlider(position: position, duration: duration, moveValue: moveValue)
-        ],
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          spacing: 300,
+          children: [
+            Text(formatDuration(position)),
+            Text(formatDuration(duration)),
+          ],
+        ),
+        LoopSlider(position: position, duration: duration, moveValue: moveValue)
+      ],
     );
   }
 

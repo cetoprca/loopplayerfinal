@@ -3,19 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_sound/public/flutter_sound_player.dart';
-import 'package:on_audio_query_pluse/on_audio_query.dart';
-import 'SongFileData.dart';
-
-class SongProvider extends ChangeNotifier{
-  SongFileData _songFileData = SongFileData();
-
-  SongFileData get songFileData => _songFileData;
-
-  void changeSong(SongFileData songFileData){
-    _songFileData = songFileData;
-    notifyListeners();
-  }
-}
+import 'package:loopplayer/model/SongFileData.dart';
 
 class AudioPlayerProvider extends ChangeNotifier{
   final FlutterSoundPlayer player = FlutterSoundPlayer();
@@ -24,8 +12,7 @@ class AudioPlayerProvider extends ChangeNotifier{
   bool isPlaying = false;
   bool isPaused = false;
   bool isLooping = false;
-
-  bool _newSong = true;
+  bool newSong = true;
 
   Duration position = Duration.zero;
   Duration duration = Duration.zero;
@@ -44,7 +31,7 @@ class AudioPlayerProvider extends ChangeNotifier{
   Future<void> changeSong(SongFileData songFileData) async{
     if(songFileData != _songFileData) {
       _songFileData = songFileData;
-      _newSong = true;
+      newSong = true;
       await play();
     }
   }
@@ -106,8 +93,11 @@ class AudioPlayerProvider extends ChangeNotifier{
         return;
       }
 
-      start = start == Duration.zero ? _songFileData.start ?? Duration.zero : start;
-      end = end == duration ? _songFileData.end ?? duration : end;
+      if(newSong){
+        start = _songFileData.start ?? Duration.zero;
+        end = _songFileData.end ?? duration;
+        newSong = false;
+      }
 
       isPlaying = true;
       isPaused = false;
@@ -189,11 +179,17 @@ class AudioPlayerProvider extends ChangeNotifier{
   }
 
   Future<void> changeStart(int second) async{
+    if(second < 0 || second > duration.inSeconds){
+      return;
+    }
     start = Duration(seconds: second);
     notifyListeners();
   }
 
   Future<void> changeEnd(int second) async{
+    if(second < 0 || second > duration.inSeconds){
+      return;
+    }
     end = Duration(seconds: second);
     notifyListeners();
   }

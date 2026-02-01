@@ -96,7 +96,7 @@ class AudioPickerState extends State<AudioPicker>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: LoopPlayerAppBar(back: _back, openMenu: _openMenu, text: "Selector de Archivos",),
+      appBar: LoopPlayerAppBar(back: _back, openMenu: _openMenu, text: "Archivos",),
       body: Stack(
         children: [
           _songs.isNotEmpty ?

@@ -21,16 +21,17 @@ class LoopPlayerAppBar extends StatelessWidget implements PreferredSizeWidget {
     final List<Widget> bar = [];
 
     bar.add(
-      IconButton(
-        onPressed: back
-            ? () => Navigator.pop(context)
-            : openMenu,
-        icon: Icon(back ? Icons.arrow_back : Icons.menu, size: 40, color: colors.accent,),
-      ),
-    );
-
-    bar.add(
-      Text(text, style: TextStyle(fontSize: 32, color: colors.accent)),
+      Row(
+        children: [
+          IconButton(
+            onPressed: back
+                ? () => Navigator.pop(context)
+                : openMenu,
+            icon: Icon(back ? Icons.arrow_back : Icons.menu, size: 40, color: colors.accent,),
+          ),
+          Text(text, style: TextStyle(fontSize: 32, color: colors.accent)),
+        ],
+      )
     );
 
     if (buttons != null) {
@@ -46,6 +47,7 @@ class LoopPlayerAppBar extends StatelessWidget implements PreferredSizeWidget {
       automaticallyImplyLeading: false,
       backgroundColor: colors.appBar,
       title: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         spacing: 0,
         children: bar,
       ),

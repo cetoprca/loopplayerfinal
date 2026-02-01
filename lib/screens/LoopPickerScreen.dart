@@ -82,7 +82,7 @@ class LoopPickerState extends State<LoopPicker>{
     List<LoopData> loops = _favorites ? loopProvider.favoriteLoops : loopProvider.loops;
 
     return Scaffold(
-      appBar: LoopPlayerAppBar(back: _back, openMenu: _openMenu, text: "Selector de Bucles", buttons: [
+      appBar: LoopPlayerAppBar(back: _back, openMenu: _openMenu, text: "Bucles", buttons: [
         IconButton(onPressed: (){
           setState(() {
             _favorites = !_favorites;

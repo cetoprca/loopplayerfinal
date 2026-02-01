@@ -10,8 +10,6 @@ import 'package:provider/provider.dart';
 
 
 void main() async{
-  await AppPreferences().initPrefs();
-
   runApp(
       MultiProvider(
           providers: [
@@ -22,6 +20,9 @@ void main() async{
           child: LoopPlayerApp()
       )
   );
+
+  await AppPreferences().initPrefs();
+
 }
 
 class LoopPlayerApp extends StatelessWidget{

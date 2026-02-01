@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_sound/public/flutter_sound_player.dart';
 import 'package:logger/logger.dart';
+import 'package:loopplayer/Prefs.dart';
 import 'package:loopplayer/model/SongFileData.dart';
 
 class AudioPlayerProvider extends ChangeNotifier{
@@ -14,6 +15,8 @@ class AudioPlayerProvider extends ChangeNotifier{
   bool isPaused = false;
   bool isLooping = false;
   bool newSong = true;
+  late bool repeatDefault;
+  late bool autoPlay;
 
   Duration position = Duration.zero;
   Duration duration = Duration.zero;
@@ -52,7 +55,7 @@ class AudioPlayerProvider extends ChangeNotifier{
 
         if(event.position > end){
           if(isLooping){
-            player.seekToPlayer(start);
+            restart();
           }else{
             stop();
             isPlaying = false;
@@ -94,11 +97,25 @@ class AudioPlayerProvider extends ChangeNotifier{
         return;
       }
 
+      repeatDefault = AppPreferences.prefs.getBool("repeatDefault") ?? true;
+      autoPlay = AppPreferences.prefs.getBool("autoPlay") ?? true;
+
       if(newSong){
         start = _songFileData.start == 0 ? Duration.zero : Duration(seconds: _songFileData.start!);
         end = _songFileData.end == 0 ? duration : Duration(seconds: _songFileData.end!);
+
+        if(!autoPlay){
+          pause();
+        }
+
+        if(repeatDefault && !isLooping){
+          toggleLoop();
+        }
+
         newSong = false;
       }
+
+      restart();
 
       isPlaying = true;
       isPaused = false;

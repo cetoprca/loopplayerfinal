@@ -42,7 +42,7 @@ class SettingsScreenState extends State<SettingsScreen> {
     _repeatDefault = prefs.getBool("repeatDefault") ?? true;
     _autoPlay = prefs.getBool("autoPlay") ?? true;
     _precisionMilis = prefs.getInt("precisionMilis") ?? 2000;
-    _pauseBetweenLoops = prefs.getInt("precisionMilis") ?? 0;
+    _pauseBetweenLoops = prefs.getInt("pauseBetweenLoops") ?? 0;
   }
 
   @override
@@ -63,7 +63,7 @@ class SettingsScreenState extends State<SettingsScreen> {
               onTap: () {
                 setState(() {
                   _autoPlay = !_autoPlay;
-                  prefs.setBool("autoplay", _autoPlay);
+                  prefs.setBool("autoPlay", _autoPlay);
                 });
               },
               buttons: [
@@ -72,7 +72,7 @@ class SettingsScreenState extends State<SettingsScreen> {
                   onChanged: (value) {
                     setState(() {
                       _autoPlay = !_autoPlay;
-                      prefs.setBool("autoplay", _autoPlay);
+                      prefs.setBool("autoPlay", _autoPlay);
                     });
                   },
                 ),
@@ -134,47 +134,7 @@ class SettingsScreenState extends State<SettingsScreen> {
                     },
                   );
                 },
-              ),
-              MenuEntry(
-                startIcon: Icon(
-                  Icons.motion_photos_paused,
-                  color: colors.accent,
-                ),
-                text: "Pausa entre bucles (milis)",
-                onTap: () {
-                  final TextEditingController textController =
-                  TextEditingController();
-
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: Text("Pausa entre bucles (milis)"),
-                        content: TextField(
-                          controller: textController,
-                          keyboardType: TextInputType.number,
-                          decoration: InputDecoration(hint: Text(_pauseBetweenLoops.toString())),
-                          inputFormatters: [
-                            FilteringTextInputFormatter.digitsOnly
-                          ],
-                        ),
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              prefs.setInt("pauseBetweenLoops", _pauseBetweenLoops);
-                              setState(() {
-                                _pauseBetweenLoops = int.parse(textController.text);
-                              });
-                            },
-                            child: Text("Enviar"),
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                },
-              ),
-
+              )
             ],
           ),
           if (_isMenuOpen)

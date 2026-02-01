@@ -57,7 +57,7 @@ class MenuOption extends StatelessWidget{
           child: Padding(
             padding: EdgeInsets.all(10),
             child: Row(
-              mainAxisSize: MainAxisSize.min,
+              mainAxisSize: MainAxisSize.max,
               spacing: 5,
 
               children: [

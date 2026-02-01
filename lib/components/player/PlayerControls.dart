@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:loopplayer/Prefs.dart';
 import 'package:loopplayer/themes/AppThemeTemplate.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PlayerControls extends StatelessWidget{
   final VoidCallback playLogic;
@@ -15,6 +17,8 @@ class PlayerControls extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
+    int precision = AppPreferences.prefs.getInt("precisionMilis") ?? 2000;
+
     final colors = Theme.of(context).extension<AppThemeTemplate>()!;
     return SizedBox(
       width: MediaQuery.sizeOf(context).width,
@@ -22,11 +26,11 @@ class PlayerControls extends StatelessWidget{
         mainAxisAlignment: MainAxisAlignment.center,
         spacing: 10,
         children: [
-          IconButton(onPressed: () => searchPosition(-2000), icon: Icon(Icons.fast_rewind_sharp, size: 48,),color: colors.accent,),
+          IconButton(onPressed: () => searchPosition(-precision), icon: Icon(Icons.fast_rewind_sharp, size: 48,),color: colors.accent,),
           IconButton(onPressed: () => toggleLoop(), icon: Icon(isLooping ? Icons.repeat_one : Icons.repeat, size: 48),color: colors.accent),
           IconButton(onPressed: () => playLogic(), icon: Icon(isPlaying && !isPaused ? Icons.pause : Icons.play_arrow, size: 48),color: colors.accent),
           IconButton(onPressed: () => restart(), icon: Icon(Icons.replay, size: 48),color: colors.accent),
-          IconButton(onPressed: () => searchPosition(2000), icon: Icon(Icons.fast_forward_sharp, size: 48),color: colors.accent),
+          IconButton(onPressed: () => searchPosition(precision), icon: Icon(Icons.fast_forward_sharp, size: 48),color: colors.accent),
         ],
       ),
     );

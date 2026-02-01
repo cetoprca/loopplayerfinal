@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:loopplayer/model/SongFileData.dart';
 import 'package:loopplayer/components/LoopPlayerAppBar.dart';
+import 'package:loopplayer/components/PickerEntry.dart';
 import 'package:loopplayer/components/SideMenu.dart';
+import 'package:loopplayer/model/SongFileData.dart';
 import 'package:loopplayer/providers/SongProvider.dart';
 import 'package:loopplayer/screens/LoopPlayerScreen.dart';
+import 'package:loopplayer/themes/AppThemeTemplate.dart';
 import 'package:on_audio_query_pluse/on_audio_query.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
@@ -61,9 +63,33 @@ class AudioPickerState extends State<AudioPicker>{
     });
   }
 
+  List<MenuEntry> _entries(List<SongModel> songs, BuildContext context){
+    final colors = Theme.of(context).extension<AppThemeTemplate>()!;
+    List<MenuEntry> entries = [];
+
+    for(SongModel songModel in songs){
+      entries.add(
+          MenuEntry(
+              startIcon: Icon(Icons.music_note, color: colors.accent,),
+              text: songModel.title,
+              onTap: (){
+                sendToProvider(songModel);
+                if(!_back){
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => LoopPlayer()));
+                }else{
+                  Navigator.pop(context);
+                }
+              }
+          )
+      );
+    }
+
+    return entries;
+  }
+
   Future<void> sendToProvider(SongModel songModel) async{
-    SongFileData songFileData = SongFileData();
-    await songFileData.setValuesFromSongModel(songModel);
+    SongFileData songFileData = SongFileData.empty();
+    await songFileData.setFromSongModel(songModel);
     if(mounted) context.read<SongProvider>().changeSong(songFileData);
   }
 
@@ -73,43 +99,18 @@ class AudioPickerState extends State<AudioPicker>{
       appBar: LoopPlayerAppBar(back: _back, openMenu: _openMenu, text: "Selector de Archivos",),
       body: Stack(
         children: [
-          Container(
-            color: _isMenuOpen ? Colors.black.withAlpha((255/2).toInt()) : Colors.black.withAlpha(0),
-            child: Column(
-              children: [
-                Expanded(
-                  child: ListView.builder(
-                      itemCount: _songs.length,
-                      itemBuilder: (context, index){
-                        SongModel songModel = _songs[index];
-
-                        return ListTile(
-                          title: GestureDetector(
-                            child: Container(
-                                padding: EdgeInsets.all(5),
-                                child: Text(songModel.title)
-                            ),
-                          ),
-                          onTap: (){
-                            sendToProvider(songModel);
-                            
-                            if(!_back){
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => LoopPlayer()));
-                            }else{
-                              Navigator.pop(context);
-                            }
-                          },
-                        );
-                      }
-                  ),
-                )
-              ],
+          _songs.isNotEmpty ?
+          SingleChildScrollView(
+              child: Column(
+                children: _entries(_songs, context),
+              )
             )
-          ),
+              :
+          Center(child: Text("No hay audios"),),
+          if(_isMenuOpen) Positioned.fill(child: Container(color: Colors.black.withAlpha(127),)),
           SideMenu(isMenuOpen: _isMenuOpen)
         ],
       ),
     );
   }
 }
-

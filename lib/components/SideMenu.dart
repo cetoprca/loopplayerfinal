@@ -3,6 +3,7 @@ import 'package:loopplayer/screens/AudioPickerScreen.dart';
 import 'package:loopplayer/screens/LoopPickerScreen.dart';
 import 'package:loopplayer/screens/LoopPlayerScreen.dart';
 import 'package:loopplayer/screens/SettingsScreen.dart';
+import 'package:loopplayer/themes/AppThemeTemplate.dart';
 
 class SideMenu extends StatelessWidget{
   final bool isMenuOpen;
@@ -10,13 +11,14 @@ class SideMenu extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppThemeTemplate>()!;
     return AnimatedPositioned(
       duration: Duration(milliseconds: 100),
       top: 0,
       bottom: 0,
       left: isMenuOpen ? 0 : -275,
       child: Container(
-        color: Color.fromARGB(255, 85, 85, 85),
+        color: colors.background,
         width: 275,
         height: MediaQuery.sizeOf(context).height - kToolbarHeight,
         child: Padding(
@@ -45,9 +47,10 @@ class MenuOption extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppThemeTemplate>()!;
     return Container(
         decoration: BoxDecoration(
-            color: Color.fromARGB(255, 50, 50, 50),
+            color: colors.backgroundConstrast,
             borderRadius: BorderRadius.all(Radius.circular(10))
         ),
         child: GestureDetector(
@@ -58,17 +61,17 @@ class MenuOption extends StatelessWidget{
               spacing: 5,
 
               children: [
-                Icon(icon, size: 32, color: Colors.yellowAccent,),
+                Icon(icon, size: 32, color: colors.accent,),
                 SizedBox(
                   width: 1,
                   height: 30,
                   child: VerticalDivider(
                     width: 10,
                     thickness: 2,
-                    color: Colors.black,
+                    color: colors.pickerEntry,
                   ),
                 ),
-                Text(text, style: TextStyle(fontSize: 20, color: Colors.white),)
+                Text(text, style: TextStyle(fontSize: 20, color: colors.entryText),)
               ],
             ),
           ),

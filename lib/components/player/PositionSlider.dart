@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:loopplayer/components/LoopSlider.dart';
+import 'package:loopplayer/components/player/LoopSlider.dart';
 
 class PositionSlider extends StatelessWidget{
   final Duration position;

@@ -3,10 +3,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_sound/public/flutter_sound_player.dart';
+import 'package:logger/logger.dart';
 import 'package:loopplayer/model/SongFileData.dart';
 
 class AudioPlayerProvider extends ChangeNotifier{
-  final FlutterSoundPlayer player = FlutterSoundPlayer();
+  final FlutterSoundPlayer player = FlutterSoundPlayer(logLevel: Level.off);
   bool isInitialized = false;
 
   bool isPlaying = false;
@@ -19,7 +20,7 @@ class AudioPlayerProvider extends ChangeNotifier{
   Duration start = Duration.zero;
   Duration end = Duration.zero;
 
-  SongFileData _songFileData = SongFileData();
+  SongFileData _songFileData = SongFileData.empty();
 
   bool _error = false;
 
@@ -67,7 +68,7 @@ class AudioPlayerProvider extends ChangeNotifier{
   }
 
   Future<void> play() async{
-    if(_songFileData.filePath.isNotEmpty){
+    if(_songFileData.filePath == null || _songFileData.filePath!.isNotEmpty){
       if(!isInitialized){
         await init();
       }
@@ -94,8 +95,8 @@ class AudioPlayerProvider extends ChangeNotifier{
       }
 
       if(newSong){
-        start = _songFileData.start ?? Duration.zero;
-        end = _songFileData.end ?? duration;
+        start = _songFileData.start == 0 ? Duration.zero : Duration(seconds: _songFileData.start!);
+        end = _songFileData.end == 0 ? duration : Duration(seconds: _songFileData.end!);
         newSong = false;
       }
 

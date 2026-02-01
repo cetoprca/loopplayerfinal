@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:loopplayer/themes/AppThemeTemplate.dart';
 
 class LoopSlider extends StatelessWidget{
   final Duration position;
@@ -10,9 +11,11 @@ class LoopSlider extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppThemeTemplate>()!;
     return Column(
       children: [
         Slider(
+          activeColor: colors.accent,
           min: 0,
           max: duration.inSeconds.toDouble().clamp(0.0, duration.inSeconds.toDouble()),
           value: position.inSeconds.toDouble(),

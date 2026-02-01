@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:loopplayer/components/LoopSlider.dart';
+import 'package:loopplayer/components/player/LoopSlider.dart';
+import 'package:loopplayer/themes/AppThemeTemplate.dart';
 
 class StartEndSlider extends StatelessWidget{
   final bool start;
@@ -25,6 +26,7 @@ class StartEndSlider extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppThemeTemplate>()!;
     return Column(
       children: [
         Center(
@@ -36,18 +38,18 @@ class StartEndSlider extends StatelessWidget{
               GestureDetector(
                   child: Container(
                     decoration: BoxDecoration(
-                        color: Colors.yellow,
+                        color: colors.accent,
                         borderRadius: BorderRadius.circular(10)
                     ),
                     width: 30,
                     height: 30,
-                    child: Icon(Icons.arrow_back_rounded),
+                    child: Icon(Icons.arrow_back_rounded, color: colors.sliderButtons,),
                   ),
                   onTap: () => moveBackward()
               ),
               Container(
                 decoration: BoxDecoration(
-                    color: Colors.yellow,
+                    color: colors.accent,
                     borderRadius: BorderRadius.circular(10)
                 ),
                 width: 50,
@@ -55,20 +57,20 @@ class StartEndSlider extends StatelessWidget{
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text(start ? "A" : "B", textAlign: TextAlign.center,),
-                    Text(formatDuration(position), textAlign: TextAlign.center,)
+                    Text(start ? "A" : "B", textAlign: TextAlign.center, style: TextStyle(color: colors.audioDataText, fontWeight: FontWeight.bold),),
+                    Text(formatDuration(position), textAlign: TextAlign.center, style: TextStyle(color: colors.audioDataText))
                   ],
                 )
               ),
               GestureDetector(
                 child: Container(
                   decoration: BoxDecoration(
-                      color: Colors.yellow,
+                      color: colors.accent,
                       borderRadius: BorderRadius.circular(10)
                   ),
                   width: 30,
                   height: 30,
-                  child: Icon(Icons.arrow_forward_rounded),
+                  child: Icon(Icons.arrow_forward_rounded, color: colors.sliderButtons),
                 ),
                 onTap: () => moveForward()
               )

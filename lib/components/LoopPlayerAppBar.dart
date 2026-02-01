@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:loopplayer/themes/AppThemeTemplate.dart';
 
 class LoopPlayerAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool back;
@@ -16,6 +17,7 @@ class LoopPlayerAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppThemeTemplate>()!;
     final List<Widget> bar = [];
 
     bar.add(
@@ -23,12 +25,12 @@ class LoopPlayerAppBar extends StatelessWidget implements PreferredSizeWidget {
         onPressed: back
             ? () => Navigator.pop(context)
             : openMenu,
-        icon: Icon(back ? Icons.arrow_back : Icons.menu, size: 40),
+        icon: Icon(back ? Icons.arrow_back : Icons.menu, size: 40, color: colors.accent,),
       ),
     );
 
     bar.add(
-      Text(text, style: const TextStyle(fontSize: 32)),
+      Text(text, style: TextStyle(fontSize: 32, color: colors.accent)),
     );
 
     if (buttons != null) {
@@ -42,7 +44,7 @@ class LoopPlayerAppBar extends StatelessWidget implements PreferredSizeWidget {
 
     return AppBar(
       automaticallyImplyLeading: false,
-      backgroundColor: Colors.black45,
+      backgroundColor: colors.appBar,
       title: Row(
         spacing: 0,
         children: bar,

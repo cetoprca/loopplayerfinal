@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:loopplayer/components/AudioInfoView.dart';
 import 'package:loopplayer/components/LoopPlayerAppBar.dart';
-import 'package:loopplayer/components/PlayerControls.dart';
-import 'package:loopplayer/components/PositionSlider.dart';
 import 'package:loopplayer/components/SideMenu.dart';
-import 'package:loopplayer/components/StartEndSlider.dart';
+import 'package:loopplayer/components/player/AudioInfoView.dart';
+import 'package:loopplayer/components/player/PlayerControls.dart';
+import 'package:loopplayer/components/player/PositionSlider.dart';
+import 'package:loopplayer/components/player/StartEndSlider.dart';
+import 'package:loopplayer/database/DatabaseHelper.dart';
 import 'package:loopplayer/providers/AudioPlayerProvider.dart';
 import 'package:loopplayer/providers/SongProvider.dart';
 import 'package:loopplayer/screens/AudioPickerScreen.dart';
 import 'package:loopplayer/screens/LoopPickerScreen.dart';
+import 'package:loopplayer/themes/AppThemeTemplate.dart';
 import 'package:provider/provider.dart';
 
 class LoopPlayer extends StatefulWidget{
@@ -91,6 +93,7 @@ class LoopPlayerState extends State<LoopPlayer>{
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppThemeTemplate>()!;
     final songFileData = context.watch<SongProvider>().songFileData;
 
     context.read<AudioPlayerProvider>().changeSong(songFileData);
@@ -125,16 +128,26 @@ class LoopPlayerState extends State<LoopPlayer>{
                 Navigator.push(context,
                     MaterialPageRoute(builder: (context) => LoopPicker(back: true)));
               },
-              icon: Icon(Icons.folder_outlined, size: 40,)),
+              icon: Icon(Icons.folder_outlined, size: 40,), color: colors.accent,),
           IconButton(
-              onPressed: (){},
-              icon: Icon(Icons.save, size: 40)),
+              onPressed: (){
+                DatabaseHelper db = DatabaseHelper();
+
+                Map<String, dynamic> loop = songFileData.toJson();
+
+                loop["favorite"] = 0;
+                loop["start"] = start.inSeconds;
+                loop["end"] = end.inSeconds;
+
+                db.insertLoop(loop);
+              },
+              icon: Icon(Icons.save, size: 40), color: colors.accent),
           IconButton(
               onPressed: (){
                 Navigator.push(context,
                     MaterialPageRoute(builder: (context) => AudioPicker(back: true)));
               },
-              icon: Icon(Icons.audio_file_outlined, size: 40)),
+              icon: Icon(Icons.audio_file_outlined, size: 40), color: colors.accent),
         ],
       ),
       body: Stack(
@@ -166,6 +179,7 @@ class LoopPlayerState extends State<LoopPlayer>{
               )
             ],
           ),
+          if(_isMenuOpen) Positioned.fill(child: Container(color: Colors.black.withAlpha(127),)),
           SideMenu(isMenuOpen: _isMenuOpen)
         ],
       ),

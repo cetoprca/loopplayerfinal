@@ -36,6 +36,7 @@ class LoopPlayerApp extends StatelessWidget{
     context.read<AudioPlayerProvider>().init();
 
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: LoopPlayer(),
       darkTheme: AppThemes().darkTheme,
       themeMode: ThemeMode.dark,

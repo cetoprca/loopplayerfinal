@@ -42,3 +42,4 @@ https://www.figma.com/design/CPdoQdaHBZDueEbqtGk2T0/LoopPlayer?node-id=6-831&t=x
 
 
 # Manual de usuario
+https://drive.google.com/file/d/1e78eYPOdPYsW4fwa_XptuJ-67nkkPcoK/view?usp=sharing

@@ -1,16 +1,44 @@
-# loopplayer
+# LoopPlayer
 
-A new Flutter project.
+Proyecto para el modulo de Diseño de Interfaces DAMº2
 
-## Getting Started
+El proyecto consiste en crear una aplicacion qur sirva de reproductor de audios,
+con la capacidad de crear "bucles" de los mismos con los sliders presentes en la pantalla
+principal.
 
-This project is a starting point for a Flutter application.
+## Funciones
 
-A few resources to get you started if this is your first Flutter project:
+1. Leer y reproducir todos los audios del dispositivo
+2. Creacion de bucles de los audios
+3. Marcar bucles como favoritos para filtrarlos
+4. Habilitar o deshabilitar la reproduccion en bucle 
+5. Leer metadata del archivo para identificar pistas de musica y audios
+6. Configurar el reproductor
+7. Reproduccion en segundo plano* (Consultar problemas)
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+La aplicacion es exclusiva de Android
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Funciona como minimo verificado en Android 13 (API 33) y versiones superiores
+
+## Problemas con la version actual
+Debido a la forma en la que Android maneja las aplicaciones en segundo plano,
+la aplicacion puede ser eliminada de memoria por el sistema operativo al no haber
+utilizado ninguna libreria ni sistema para evitar que Android la considere como 
+espacio potencialmente disponible en caso de necesitarlo.
+
+Aun con esta problematica, si Android no necesita el espacio en memoria la reproduccion
+no termina abruptamente y continua ejecutandose correctamente, incluso con la pantalla
+apagada.
+
+## Posibles mejoras
+
+1. Soporte para la reproduccion en segundo plano correctamente
+2. Capacidad para editar el nombre de los bucles
+3. Mas ajustes de configuracion
+
+
+# Diseño Figma
+https://www.figma.com/design/CPdoQdaHBZDueEbqtGk2T0/LoopPlayer?node-id=6-831&t=xZeIQPaxgUYqgfGj-1
+
+
+# Manual de usuario
